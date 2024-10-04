@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="input">
+        <label for="">Nhập trường 1</label>
+        <input
+          type="number"
+          id="field1"
+          placeholder="Nhập trường 1 (1000 mili giây)"
+        />
+        <br />
+        <label for="">Nhập trường 2</label>
+        <input
+          type="number"
+          id="field2"
+          placeholder="Nhập trường 2 (1000 mili giây)"
+        />
+        <br />
+        <label for="">Nhập trường 3</label>
+        <input
+          type="number"
+          id="field3"
+          placeholder="Nhập trường 3 (1000 mili giây)"
+        />
+        <br />
+        <button id="updateButton">Update</button>
+      </div>
+      <div class="history">
+        <h1 id="historyHeader">History</h1>
+        <table id="historyTable" style="display: none">
+          <thead>
+            <tr>
+              <th>Data 1</th>
+              <th>Data 2</th>
+              <th>Data 3</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+  <script>
+    const dataKey = "historyData";
+    let data = JSON.parse(localStorage.getItem(dataKey)) || [];
+
+    function initTable() {
+      data.forEach((newData) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${newData.field1} mili giây</td><td>${newData.field2} mili giây</td><td>${newData.field3} mili giây</td><td>${newData.time}</td>`;
+        document.getElementById("historyBody").appendChild(row);
+      });
+    }
+
+    initTable();
+
+    document.getElementById("updateButton").addEventListener("click", () => {
+      const field1 = document.getElementById("field1").value;
+      const field2 = document.getElementById("field2").value;
+      const field3 = document.getElementById("field3").value;
+
+      const newData = {
+        field1,
+        field2,
+        field3,
+        time: new Date().toLocaleString(),
+      };
+
+      data.unshift(newData);
+
+      if (data.length > 10) {
+        data.pop(); 
+      }
+
+      localStorage.setItem(dataKey, JSON.stringify(data));
+
+      updateTable();
+
+      document.getElementById("field1").value = "";
+      document.getElementById("field2").value = "";
+      document.getElementById("field3").value = "";
+    });
+
+    document.getElementById("historyHeader").addEventListener("click", () => {
+      const table = document.getElementById("historyTable");
+      table.style.display = table.style.display === "none" ? "block" : "none";
+    });
+
+    function updateTable() {
+      const historyBody = document.getElementById("historyBody");
+      historyBody.innerHTML = "";  
+
+      data.forEach((newData) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${newData.field1} mili giây</td><td>${newData.field2} mili giây</td><td>${newData.field3} mili giây</td><td>${newData.time}</td>`;
+        historyBody.appendChild(row);
+      });
+    }
+  </script>
+</html>
